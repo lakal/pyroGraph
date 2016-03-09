@@ -32,6 +32,9 @@ class DotController {
 
     analyzeImage();
     sortDots();
+    
+    Collections.reverse(dots); // magic!
+    Collections.reverse(dotsSorted); // magic!
   }
 // ----- CONSTRUCTOR: START
 

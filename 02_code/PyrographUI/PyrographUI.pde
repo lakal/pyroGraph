@@ -17,13 +17,8 @@ int[] times = {0, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 0};
 void setup(){
  
   size(200,200);
-  println("Choose the USB port:");
   printArray(Serial.list());
   myPort = new Serial(this, Serial.list()[3], 57600);
-  
-  if(myPort.available() > 0){
-    println(myPort.read());
-  }
   
 }
 
@@ -31,9 +26,10 @@ void draw() {
   
   //100 dots
   if(mousePressed){
-    for(int i=0; i<12; i++){
+    
+    for(int i=0; i<5; i++){
       
-      if(times[i] != 0){
+     if(times[i] != 0){
         servo = 1;   
         update(servo, motorX, motorY);
       }
@@ -46,11 +42,12 @@ void draw() {
       delay(1000);  // wait for motor 
     }
   }
+  
 }
 
 void update(int z, int x, int y){  
   myPort.write(x);
   myPort.write(y);
   myPort.write(z);
-  println("servo: "+z+"\t"+"\t"+"motorX: "+motorX);
+  println("servo: "+z+"\t"+"\t"+"motorX: "+motorX+"\t"+"\t"+"motorX: "+motorX);
 }

@@ -11,7 +11,7 @@ class Dot {
     y = _y;
     fill = _brightnessAvg;
     times = _times;
-    time = times[int(map(fill, 0, 255, 0, times.length))];
+    time = times[int(map(fill, 0, 255, times.length-1, 0))];
   }
 // ----- CONSTRUCTOR: END
   
