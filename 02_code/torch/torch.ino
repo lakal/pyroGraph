@@ -3,7 +3,10 @@
 #include <Servo.h>
 Servo servo;
 
-AF_Stepper motor1(200, 1);
+
+
+AF_Stepper motor1(48, 1);
+
 void forwardstep1()  { motor1.onestep(BACKWARD, SINGLE);}
 void backwardstep1() { motor1.onestep(FORWARD, SINGLE);}
 AccelStepper stepper1(forwardstep1, backwardstep1);
@@ -20,8 +23,8 @@ int servoPos = 120;
 void setup()
 {  
   Serial.begin(57600);
-  stepper1.setSpeed(200);
-  stepper1.setAcceleration(250.0);
+  stepper1.setMaxSpeed(3000);
+  stepper1.setAcceleration(2000); 
   servo.attach(10);
   //servo.write(120);
 }
@@ -47,6 +50,7 @@ void loop()
   servo.write(servoPos);
   stepper1.run();
   stepper1.moveTo(stepper1Target*kerning);
+  
 }
 
 void parseData()

@@ -10,6 +10,8 @@ int motorY = 0;
 boolean servoL = false;
 boolean servoR = false;
 
+int[] times = {0, 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 0};
+
 // up = 125       down = 80
 
 void setup(){
@@ -27,20 +29,24 @@ void setup(){
 
 void draw() {
   
+  //100 dots
   if(mousePressed){
-    for(int i=0; i<3; i++){
-      delay(2000); // time on paper
-      servo = 1;   
-      update(servo, motorX, motorY);
+    for(int i=0; i<12; i++){
+      
+      if(times[i] != 0){
+        servo = 1;   
+        update(servo, motorX, motorY);
+      }
       servo = 0;
-      motorX += 1;
-      delay(1000);  // time up 
+      delay(times[i]);    // grayscale
+      
       update(servo, motorX, motorY);
-      delay(1000);  // time up 
+      motorX += 1;
+      update(servo, motorX, motorY);
+      delay(1000);  // wait for motor 
     }
   }
 }
-
 
 void update(int z, int x, int y){  
   myPort.write(x);
