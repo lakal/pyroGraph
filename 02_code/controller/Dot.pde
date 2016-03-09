@@ -4,7 +4,8 @@ class Dot {
   int fill;
   int[] times;
   int time; //milliseconds
-  
+
+// ----- CONSTRUCTOR: START
   Dot(int _x, int _y, int _brightnessAvg, int[] _times) {
     x = _x;
     y = _y;
@@ -12,7 +13,9 @@ class Dot {
     times = _times;
     time = times[int(map(fill, 0, 255, 0, times.length))];
   }
+// ----- CONSTRUCTOR: END
   
+// ----- RENDER: START
   public void display(int size) {
     pushStyle();
       noStroke();
@@ -20,5 +23,5 @@ class Dot {
       rect(x,y,size,size);
     popStyle();
   }
-
+// ----- RENDER: END
 }
