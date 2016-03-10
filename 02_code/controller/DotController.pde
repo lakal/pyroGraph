@@ -89,6 +89,14 @@ class DotController {
   }
 // ----- SORTER: END
 
+// ----- SORTER: START
+// ----- sort rows so that uneven lines are printed from right to left
+  private void sortDots2() {
+    
+  }
+// ----- SORTER: END
+
+
 // ----- RENDERING: START
   public void render() { 
     for (Dot d : dots) {

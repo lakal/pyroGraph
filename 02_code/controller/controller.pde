@@ -37,8 +37,9 @@ void draw() {
     
     pushMatrix();
     translate(0, img.height+20);
-
-    for(int j = 0; j<18; j++){
+    print();
+    
+    for(int j = 0; j<d.dotsPerColumn; j++){
       motorY = j;
       for (int i = 1; i<dotsPerLine; i++) {
   
@@ -61,6 +62,9 @@ void draw() {
   
         println(dot.time+"\t"+i);
       }
+      
+      
+      
       println("line: "+j);
       delay(10000);
     }

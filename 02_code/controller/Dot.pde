@@ -2,6 +2,7 @@ class Dot {
   int x;
   int y;
   int fill;
+  int indx;
   int[] times;
   int time; //milliseconds
 
