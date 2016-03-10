@@ -9,6 +9,9 @@ class DotController {
   int dotDistance;
   int size;
   int[] times;
+  
+  int darkest = 100;
+  int brightest = 100;
 
   ArrayList<Dot> dots = new ArrayList<Dot>();
   ArrayList<Dot> dotsSorted = new ArrayList<Dot>();
@@ -30,6 +33,9 @@ class DotController {
 
     unsortedImage();
     sortedImage();
+
+    Collections.reverse(dots);
+    Collections.reverse(dotsSorted);
 
   }
 // ----- CONSTRUCTOR: END
@@ -75,6 +81,14 @@ class DotController {
     for (int i = 0; i < dotDistance; i++) { //get the x average
       int locAvg = (_x+i)+ _y * widthOfImage;
       brightnessAvg += int(brightness(img.pixels[locAvg]));
+      //get brightest and darkest average 
+      if(brightnessAvg>darkest) {
+        darkest = brightnessAvg;
+      } 
+      if(brightnessAvg<brightest) {
+      brightest = brightnessAvg;
+      }
+      
     }
     return brightnessAvg;
   }
