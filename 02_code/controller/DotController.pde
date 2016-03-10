@@ -13,8 +13,6 @@ class DotController {
   ArrayList<Dot> dots = new ArrayList<Dot>();
   ArrayList<Dot> dotsSorted = new ArrayList<Dot>();
 
-  private boolean debug = false;
-
 // ----- CONSTRUCTOR: START
   DotController(PImage _img, int _dotsPerLine, int[] _times) {
     img = _img;
@@ -30,85 +28,72 @@ class DotController {
     println("Dots per Column: "+dotsPerColumn);
     println("Dots total: "+dotsPerLine*dotsPerColumn);
 
-    analyzeImage();
-    sortDots();
-    
-    Collections.reverse(dots); // magic!
-    Collections.reverse(dotsSorted); // magic!
-  }
-// ----- CONSTRUCTOR: START
+    unsortedImage();
+    sortedImage();
 
-// ----- GENERATE ARRAY FROM IMAGE: START
-// ----- loop through the image and calculate average from sections
-  private void analyzeImage() { 
+  }
+// ----- CONSTRUCTOR: END
+
+// ----- UNSORTED IMAGE: START
+  private void unsortedImage() {
+    img.loadPixels();
+    
+    for (int y=0; y < heightOfImage; y += dotDistance) { 
+      int tempY = int(y/dotDistance);
+      for (int x=0; x < widthOfImage; x += dotDistance) {
+        int tempX = int(x/dotDistance);
+        dots.add( new Dot(tempX, tempY, int(getBrightness(x, y)/dotDistance), times) ); //initialize dot
+      }
+    }
+  }
+// ----- UNSORTED IMAGE: END
+  
+// ----- SORTED IMAGE: START
+  private void sortedImage() {
     img.loadPixels();
     for (int y=0; y < heightOfImage; y += dotDistance) { 
-      for (int x=0; x < widthOfImage; x += dotDistance) {
-        float brightnessAvg = 0;
-        for (int i = 0; i < dotDistance; i++) { //get the x average
-          int locAvg = ((x+i)+ y * widthOfImage);
-          brightnessAvg += int(brightness(img.pixels[locAvg]));
+      int tempY = int(y/dotDistance);
+      
+      if((y/dotDistance) % 2 == 0) { // 1,3,5,7,..
+        for (int x=0; x < widthOfImage; x += dotDistance) {
+          int tempX = int(x/dotDistance);
+          dotsSorted.add( new Dot(tempX, tempY, int(getBrightness(x, y)/dotDistance), times) ); //initialize dot
         }
-        dots.add( new Dot(x, y, int(brightnessAvg/dotDistance), times) ); //initialize dot
+      } else {
+        for (int x=widthOfImage; x >= 0; x -= dotDistance) {
+          int tempX = int(x/dotDistance);
+          dotsSorted.add( new Dot(tempX, tempY, int(getBrightness(x, y)/dotDistance), times) ); //initialize dot
+        }
       }
     }
   }
-// ----- GENERATE ARRAY FROM IMAGE: END
+// ----- SORTED IMAGE: END
 
-// ----- SORTER: START
-// ----- sort rows so that uneven lines are printed from right to left
-  private void sortDots() {
-    int rowCount = 0; // keep track of the rows
-    for (int x=0; x < dots.size(); x+= dotsPerLine) {
-      if ((rowCount % 2) == 0) { // 1,3,5,7,.. are just copied
-       if(debug) println("--> "+ x + "-" + ((rowCount+1)*dotsPerLine-1));
-        int dotRange = (rowCount+1)*dotsPerLine;
-
-        for (int i=x; i< dotRange; i++ ) {
-          dotsSorted.add( dots.get(i) );
-        }
-      } else { // 2,4,6,8,.. reverse!
-        if(debug) println("<.. "+ x + "-" + ((rowCount+1)*dotsPerLine-1));
-        int dotRange = (rowCount+1)*dotsPerLine;
-
-        ArrayList<Dot> tempDots = new ArrayList<Dot>(); // create temporary array to flip
-
-        for (int i=x; i < dotRange; i++) {
-          tempDots.add(dots.get(i)); 
-        }
-        
-        Collections.reverse(tempDots); // magic!
-
-        for (int i=x; i < dotRange; i++) {
-          dotsSorted.add(tempDots.get(i-x)); // add the reversed dots
-        }   
-        tempDots.clear(); //clean up, just in case
-      }
-      rowCount++;
+// ----- HELPER AVERAGE BRIGHTNESS: START
+  private int getBrightness(int _x, int _y) {
+    int brightnessAvg = 0;
+    for (int i = 0; i < dotDistance; i++) { //get the x average
+      int locAvg = (_x+i)+ _y * widthOfImage;
+      brightnessAvg += int(brightness(img.pixels[locAvg]));
     }
+    return brightnessAvg;
   }
-// ----- SORTER: END
-
-// ----- SORTER: START
-// ----- sort rows so that uneven lines are printed from right to left
-  private void sortDots2() {
-    
-  }
-// ----- SORTER: END
-
+// ----- HELPER AVERAGE BRIGHTNESS: END
 
 // ----- RENDERING: START
-  public void render() { 
-    for (Dot d : dots) {
-      d.display(dotDistance);
+  public void render(String mode) { 
+    if (mode == "SORTED") { 
+      for (Dot d : dotsSorted) d.display(dotDistance, dotDistance);
+    } else if(mode == "UNSORTED") {
+      for (Dot d : dots) d.display(dotDistance, dotDistance);
     }
   }
 
   public void renderIndividually(int i, String mode) {
     if (mode == "SORTED") {
-      dotsSorted.get(i).display( dotDistance );
+      dotsSorted.get(i).display( dotDistance, dotDistance );
     } else if (mode == "UNSORTED") { 
-      dots.get(i).display( dotDistance );
+      dots.get(i).display( dotDistance, dotDistance );
     }
   }
 // ----- RENDERING: END
@@ -118,15 +103,24 @@ class DotController {
     Dot d = dots.get(i);  
     return d;
   }
-  
+
   public int getTimeOfDot(int i) {
     int t = dots.get(i).time;  
     return t;
   }
-
+  
+  public int getXOfDot(int i) {
+    int x = dots.get(i).x;  
+    return x;
+  }
+  
+  public int getYOfDot(int i) {
+    int y = dots.get(i).y;  
+    return y;
+  }
   public Dot getDotFromSorted(int i) {
     Dot d = dotsSorted.get(i);  
     return d;
   }
-// ----- GETTERS: END  
+// ----- GETTERS: END
 }
