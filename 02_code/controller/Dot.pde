@@ -17,11 +17,11 @@ class Dot {
 // ----- CONSTRUCTOR: END
   
 // ----- RENDER: START
-  public void display(int size) {
+  public void display(int distance, int size) {
     pushStyle();
       noStroke();
       fill(fill);
-      rect(x,y,size,size);
+      rect(x*distance, y*distance, size, size);
     popStyle();
   }
 // ----- RENDER: END
