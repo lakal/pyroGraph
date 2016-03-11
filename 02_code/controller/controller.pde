@@ -12,7 +12,7 @@ int motorX = 0;
 int count = 0;
 float estimatedTime = 0;
 
-boolean debug = true;
+boolean debug = false;
 
 void setup() {
   size(400, 800);
@@ -37,6 +37,7 @@ void setup() {
 
 void draw() {
   burnImage();
+  c.readData();
 }
 
 void burnImage() {
@@ -51,14 +52,14 @@ void burnImage() {
     if ( d.getTime(count, "SORTED" ) != 0) {
       servo = 1;   
       //c.sendData(servo, motorX, motorY);
-      if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); }; 
+      if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
     }
     servo = 0;
-    delay( d.getTime(count, "SORTED" ));
+    //delay( d.getTime(count, "SORTED" )); //time onn paper
     
-    if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); }; 
+    if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
 
-    delay(1400);  // wait for motor
+    delay(100);  // wait for motor
   } else { 
    // println("done");
   }

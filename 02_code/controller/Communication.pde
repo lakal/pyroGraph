@@ -14,4 +14,11 @@ class Communication {
     myPort.write(z);
    // println("servo: "+z+"\t"+"\t"+"motorX: "+motorX+"\t"+"\t"+"motorX: "+motorX);
   }
+  
+   void readData() {
+     if(myPort.available() > 0) {
+       println("arduino says: "+myPort.read());
+     }
+   }
+  
 }
