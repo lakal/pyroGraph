@@ -55,11 +55,11 @@ void burnImage() {
       if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
     }
     servo = 0;
-    //delay( d.getTime(count, "SORTED" )); //time onn paper
+    delay( d.getTime(count, "SORTED" )); //time onn paper
     
     if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
 
-    delay(100);  // wait for motor
+    delay(1400);  // wait for motor
   } else { 
    // println("done");
   }
