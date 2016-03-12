@@ -5,7 +5,7 @@ Servo servo;
 
 
 
-AF_Stepper motor1(48, 1);
+AF_Stepper motor1(34, 1);
 AF_Stepper motor2(200, 2);
 
 void forwardstep1()  {
@@ -45,15 +45,16 @@ boolean test = false;
 
 void setup()
 {
-  Serial.begin(57600);
-  stepper1.setMaxSpeed(3000);
-  stepper1.setAcceleration(2000);
+  Serial.begin(115200);
+  stepper1.setMaxSpeed(1000);
+  stepper1.setAcceleration(500);
+  stepper1.setSpeed(1000);
 
   stepper2.setMaxSpeed(2000);
   stepper2.setAcceleration(1000);
 
   servo.attach(10);
-  servo.write(30);
+  servo.write(70);
 }
 
 void loop() { 
@@ -74,7 +75,7 @@ void loop() {
     servoPos = 0;
   }
   else {
-    servoPos = 30;
+    servoPos = 70;
   } 
   servo.write(servoPos);
   // ----- SERVO: END
@@ -87,26 +88,24 @@ void loop() {
      prevPos = curPos;
   }
  
-  /*
+
   if(test == true) {
     
    stepper2.run();
-   stepper2.moveTo(c*100); 
+   stepper2.moveTo(c*30); 
    
    
    if (stepper2.targetPosition() == stepper2.currentPosition()) {
       test=false;
-      Serial.write(2);
       stepper2.stop();  
       c++;
     }
     
   }
-  */
 
 
   stepper1.run();
-  stepper1.moveTo(stepper1Target * kerning);
+  stepper1.moveTo(-stepper1Target * kerning);
   
 }
 

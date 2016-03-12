@@ -29,7 +29,7 @@ void setup() {
   
   println("\n\n------------------------ \nEstimated Time: "+nf((estimatedTime/1000)/60, 0, 2)+" Minutes\n------------------------\n\n");
   
-  if(debug) { println("DEBUG MODE"); } else { c = new Communication(3, 57600); }
+  if(debug) { println("DEBUG MODE"); } else { c = new Communication(3, 115200); }
   
   tint(255, 100, 100, 200);
   image(img, 0, 0);
@@ -45,24 +45,26 @@ void burnImage() {
 
     d.renderIndividually(count, "SORTED");  
 
-    motorY = d.getY(count, "SORTED");
-    motorX = d.getX(count, "SORTED");
-    servo = 1;
+}
 
+    
     if ( d.getTime(count, "SORTED" ) != 0) {
       servo = 1;   
       //c.sendData(servo, motorX, motorY);
-      if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
-    }
-    servo = 0;
-    delay( d.getTime(count, "SORTED" )); //time onn paper
+      if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); };
+     }
     
+    delay( d.getTime(count, "SORTED" )); //time onn paper
+    servo = 0;
+    motorY = d.getY(count, "SORTED");
+    motorX = d.getX(count, "SORTED");
     if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
+    if(d.getTime(count, "SORTED" ) == 0){
+      delay(500);
+    }
+    delay(2000);  // wait for motor
+    
 
-    delay(1400);  // wait for motor
-  } else { 
-   // println("done");
-  }
   count++;
 }
 
