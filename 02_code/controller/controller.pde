@@ -1,5 +1,5 @@
 PImage img;
-int dotsPerLine = 40;
+int dotsPerLine = 39;
 DotController d;
 Communication c;
 
@@ -12,14 +12,14 @@ int motorX = 0;
 int count = 0;
 float estimatedTime = 0;
 
-boolean debug = false;
+boolean debug = true;
 
 void setup() {
-  size(400, 800);
+  size(450, 800);
   
   background(255);
   img = loadImage("testGradient.jpg"); 
-  img.resize(width, 0);
+  img.resize(400, 0);
   d = new DotController(img, dotsPerLine, time);
   
   for(int i=0; i< d.dotsSorted.size(); i++) {
@@ -37,7 +37,7 @@ void setup() {
 
 void draw() {
   burnImage();
-  c.readData();
+  //c.readData();
 }
 
 void burnImage() {
@@ -58,11 +58,12 @@ void burnImage() {
     servo = 0;
     motorY = d.getY(count, "SORTED");
     motorX = d.getX(count, "SORTED");
+    
     if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
     if(d.getTime(count, "SORTED" ) == 0){
       delay(500);
     }
-    delay(2000);  // wait for motor
+    delay(500);  // wait for motor
     
 
   count++;
