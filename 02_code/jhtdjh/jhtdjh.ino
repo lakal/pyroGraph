@@ -36,7 +36,7 @@ int servoPos = 30;
 int linePos;
 int line = 0;
 int lineHight = 100;
-int kerning = 300;
+int kerning = 30;
 int c = 0;
 int prevPos = 0;
 int curPos = 0;
@@ -70,17 +70,6 @@ void loop() {
     bfrIndx = 0;
   }
 
-  // ----- SERVO: START
-  if (servoTarget == 1) {
-    servoPos = 0;
-  }
-  else {
-    servoPos = 70;
-  } 
-  servo.write(servoPos);
-  // ----- SERVO: END
-
-  
   curPos = stepper2Target;
   
   if(curPos != prevPos) {
@@ -97,7 +86,7 @@ void loop() {
    
    if (stepper2.targetPosition() == stepper2.currentPosition()) {
       test=false;
-      stepper2.stop();  
+    //  stepper2.stop();  
       c++;
     }
     
@@ -106,6 +95,19 @@ void loop() {
 
   stepper1.run();
   stepper1.moveTo(-stepper1Target * kerning);
+
+
+  // ----- SERVO: START
+  if (servoTarget == 1) {
+    servoPos = 0;
+  }
+  else {
+    servoPos = 70;
+  } 
+  servo.write(servoPos);
+  // ----- SERVO: END
+
+  
   
 }
 
