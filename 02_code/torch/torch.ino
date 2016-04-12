@@ -30,28 +30,27 @@ uint8_t bfrIndx = 0;
 int stepperXTarget = 0;
 int stepperYTarget = 0;
 int servoTarget = 0;
-int servoPos = 30;
-int linePos;
-int line = 0;
-int lineHight = 100;
+int servoPos = 0;
+int lineH = 30;
 int kerning = 30;
-int c = 0;
-int prevPos = 0;
-int curPos = 0;
+
+int servoUp = 70;
+int servoDown = 0;
 
 boolean test = false;
 
 void setup()
 {
   Serial.begin(115200);
+  
   stepperX.setMaxSpeed(2000);
-  stepperX.setAcceleration(1000);
+  stepperX.setAcceleration(1500);
 
   stepperY.setMaxSpeed(2000);
-  stepperY.setAcceleration(1000);
+  stepperY.setAcceleration(1500);
 
   servo.attach(10);
-  servo.write(70);
+  servo.write(servoUp);
 }
 
 void loop() {
@@ -62,49 +61,31 @@ void loop() {
       bfrIndx++;
     }
   }
+  
   if (bfrIndx == 3) {
     parseData();
     bfrIndx = 0;
   }
 
+
+
   // ----- SERVO: START
   if (servoTarget == 1) {
-    servoPos = 0;
+    servoPos = servoDown;
+  }else{
+    servoPos = servoUp;
   }
-  else {
-    servoPos = 70;
-  }
+
   servo.write(servoPos);
   // ----- SERVO: END
 
- 
-  curPos = stepperYTarget;
 
-  if (curPos != prevPos) {
-    test = true;
-    prevPos = curPos;
-  }
-
-
-  if (test == true) {
-
-    stepperY.run();
-    stepperY.moveTo(c * 30);
-
-
-    if (stepperY.targetPosition() == stepperY.currentPosition()) { //on arrival
-      test = false;
-     // stepperY.stop();
-      c++;
-    }
-
-  } else {
-    
-    
-
+  stepperY.run();
   stepperX.run();
-  stepperX.moveTo(-stepperXTarget*kerning);
-  }
+  
+  stepperY.moveTo(stepperYTarget*lineH);
+  stepperX.moveTo(stepperXTarget*kerning);
+  
 }
 
 void parseData()

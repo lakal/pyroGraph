@@ -3,22 +3,25 @@ int dotsPerLine = 39;
 DotController d;
 Communication c;
 
-int[] time = {0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1100};
+int[] time = {0, 100, 200, 350, 500, 750, 900, 1050, 1300, 1500, 2500};
 
 int servo = 125;
 int motorY = 0;
 int motorX = 0;
 
+int lineHeight = 100;
+int kerning = 30;
+
 int count = 0;
 float estimatedTime = 0;
 
-boolean debug = true;
+boolean debug = false;
 
 void setup() {
   size(450, 800);
   
   background(255);
-  img = loadImage("testGradient.jpg"); 
+  img = loadImage("test2.jpg"); 
   img.resize(400, 0);
   d = new DotController(img, dotsPerLine, time);
   
@@ -40,18 +43,17 @@ void draw() {
   //c.readData();
 }
 
+
 void burnImage() {
   if ( count < d.dotsSorted.size() ) {
 
     d.renderIndividually(count, "SORTED");  
-
 }
 
-    
     if ( d.getTime(count, "SORTED" ) != 0) {
       servo = 1;   
       //c.sendData(servo, motorX, motorY);
-      if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); };
+      if(debug) { println(servo+"  "+ motorX +"  "+ int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); } else { c.sendData(servo, motorX, int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); println(servo+"  "+motorX+"  "+int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); };
      }
     
     delay( d.getTime(count, "SORTED" )); //time onn paper
@@ -59,18 +61,13 @@ void burnImage() {
     motorY = d.getY(count, "SORTED");
     motorX = d.getX(count, "SORTED");
     
-    if(debug) { println(servo+"  "+motorX+"  "+motorY); } else { c.sendData(servo, motorX, motorY); println(servo+"  "+motorX+"  "+motorY); }; 
+    if(debug) { println(servo+"  "+ motorX +"  "+  int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); } else { c.sendData(servo, motorX, int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); println(servo+"  "+motorX+"  "+int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); }; 
     if(d.getTime(count, "SORTED" ) == 0){
       delay(500);
     }
-    delay(500);  // wait for motor
-    
-
-  count++;
+    delay(10);  // wait for motor  10 for moving straight, 500 for lifting
+    count++;
 }
-
-
-
 
 /*
 void draw() {
