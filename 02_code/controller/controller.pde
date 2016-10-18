@@ -1,126 +1,133 @@
-PImage img;
-int dotsPerLine = 39;
-DotController d;
-Communication c;
+import processing.serial.*;
+int[][] mPixels; 
+PImage mImage;
+Serial myPort;
 
-int[] time = {0, 100, 200, 350, 500, 750, 900, 1050, 1300, 1500, 2500};
+int rowCount = 0;
+int pixelCount = 0;
+int runCount = 0;
+int dots_pr_H = 0;
+int row = 0;
+int col = 0;
+int dots = 100;      // only even numbers
 
-int servo = 125;
-int motorY = 0;
-int motorX = 0;
 
-int lineHeight = 100;
-int kerning = 30;
+int x = 0;
+int y = 0;
+int z = 0;
 
-int count = 0;
-float estimatedTime = 0;
+int[] time = {0, 100, 200, 350, 500, 750, 900, 1050, 1300, 1800, 3000};
 
 boolean debug = false;
 
-void setup() {
-  size(450, 800);
-  
+void setup() { 
   background(255);
-  img = loadImage("test2.jpg"); 
-  img.resize(400, 0);
-  d = new DotController(img, dotsPerLine, time);
+  size(500, 1081);
+  noStroke();
+  printArray(Serial.list());
   
-  for(int i=0; i< d.dotsSorted.size(); i++) {
-    estimatedTime += d.getTime(i, "SORTED");
-    estimatedTime += 1400;
+  if(debug == false){myPort = new Serial(this, Serial.list()[3], 115200);}
+  mImage = loadImage("data/uss.jpg");
+  
+  int res = mImage.width/dots;
+  dots_pr_H = mImage.height/res;
+  
+  mPixels = new int[dots_pr_H][dots];
+  
+  
+  for (int y = 0; y < mImage.height/res; y++) {
+    rowCount++;
+    for (int x = 0; x < mImage.width/res; x++) {     
+      int loc = (x*res) + (y*res) * mImage.width;
+      
+      int avg = 0;
+      for(int i = 0; i < res; i++){
+        for(int j = 0; j < res; j++){
+          avg += (int) brightness(mImage.pixels[loc+i+(j*mImage.width)]);
+        }
+      }
+      //println(y);
+      mPixels[y][x] = avg/(res*res);
+      pixelCount++;
+    }
+  }
+  mImage.resize(width/2,0);
+  image(mImage, 0, 0);
+  
+  // flip every secound row
+  for(int i=0; i < mPixels.length; i++){
+    if(i%2!=0){mPixels[i] = reverse(mPixels[i]);}
+  } 
+  row = rowCount-1;
+  
+  if(debug == true){
+    int s = width/dots/2;
+    translate(width/2+s/2, 0);
+    for(int i=0; i<mPixels.length; i++){
+       for(int j=0; j<dots; j++){
+         fill(mPixels[i][j]); 
+       
+         if(i%2==0){ellipse(j*s, i*s, s, s);;}
+         if(i%2!=0){ellipse((dots*s)-(j*s)-s, i*s, s, s);}
+      }
+    }
+  }
+}
+
+void draw() {
+  
+  int s = width/dots/2;
+  translate(width/2+s/2, 0);
+  
+  fill(mPixels[row][col]); 
+  if(row%2==0){ellipse(col*s, row*s, s, s);}
+  if(row%2!=0){ellipse((dots*s)-(col*s)-s, row*s, s, s);}
+  
+  y = runCount;
+  x = 0;
+  z = time[(int) map(mPixels[row][col],0,255,10,0)];
+  
+  if(mPixels.length%2==0){
+    if(row%2!=0){x = col;}
+    if(row%2==0){x = dots-col-1;}
+  }
+  if(mPixels.length%2!=0){
+    if(row%2==0){x = col;}
+    if(row%2!=0){x = dots-col-1;}
+  }
+   
+  println("y "+y+"\t"+"x "+x+"\t"+1+"\t"+"t "+z);
+  println("y "+y+"\t"+"x "+x+"\t"+0);
+  
+  if(debug == false){
+    
+    sendData(x,y,0);
+    
+    if(z != 0){
+     delay(400);
+     sendData(x,y,1);
+    } 
+    
+    delay(150);
+    delay(z);
   }
   
-  println("\n\n------------------------ \nEstimated Time: "+nf((estimatedTime/1000)/60, 0, 2)+" Minutes\n------------------------\n\n");
+  col++;
+  if(col == dots){
+    row--; 
+    col=0;
+    runCount++;
+  }
   
-  if(debug) { println("DEBUG MODE"); } else { c = new Communication(3, 115200); }
-  
-  tint(255, 100, 100, 200);
-  image(img, 0, 0);
+  if (runCount == rowCount){
+    noLoop();
+  }
 }
 
-void draw() {
-  burnImage();
-  //c.readData();
+void sendData(int x, int y, int z) {
+  if(debug == false){
+    myPort.write(x);
+    myPort.write(y);
+    myPort.write(z);
+  }
 }
-
-
-void burnImage() {
-  if ( count < d.dotsSorted.size() ) {
-
-    d.renderIndividually(count, "SORTED");  
-}
-
-    if ( d.getTime(count, "SORTED" ) != 0) {
-      servo = 1;   
-      //c.sendData(servo, motorX, motorY);
-      if(debug) { println(servo+"  "+ motorX +"  "+ int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); } else { c.sendData(servo, motorX, int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); println(servo+"  "+motorX+"  "+int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); };
-     }
-    
-    delay( d.getTime(count, "SORTED" )); //time onn paper
-    servo = 0;
-    motorY = d.getY(count, "SORTED");
-    motorX = d.getX(count, "SORTED");
-    
-    if(debug) { println(servo+"  "+ motorX +"  "+  int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); } else { c.sendData(servo, motorX, int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); println(servo+"  "+motorX+"  "+int(map(motorY, d.dotsPerColumn, 0, 0, d.dotsPerColumn))); }; 
-    if(d.getTime(count, "SORTED" ) == 0){
-      delay(500);
-    }
-    delay(10);  // wait for motor  10 for moving straight, 500 for lifting
-    count++;
-}
-
-/*
-void draw() {
- 
- //println(d.dots.get(0));
- count++;
- image(img, 0, 0);
- 
- pushMatrix();
- translate(0, img.height+20);
- 
- for (int i = 0; i< d.dotsSorted.size(); i++) {
- d.renderIndividually(i, "SORTED");  
- // println(d.getTimeOfDot(i));
- }
- popMatrix();
- 
- if (count==10) {
- 
- pushMatrix();
- translate(0, img.height+20);
- print();
- 
- for(int j = 0; j<d.dotsPerColumn; j++){
- motorY = j;
- for (int i = 1; i<dotsPerLine; i++) {
- 
- Dot dot = d.dots.get(i);
- d.renderIndividually(i, "SORTED");  
- 
- if (dot.time != 0) {
- servo = 1;   
- //  c.sendData(servo, motorX, motorY);
- }
- servo = 0;
- delay(dot.time);    // grayscale
- 
- // c.sendData(servo, motorX, motorY);
- 
- motorX = i;
- 
- //  c.sendData(servo, i, motorY);
- delay(1400);  // wait for motor
- 
- println(dot.time+"\t"+i);
- }
- 
- 
- 
- println("line: "+j);
- delay(10000);
- }
- 
- popMatrix();
- } 
- }*/
